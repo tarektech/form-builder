@@ -1,0 +1,78 @@
+[
+  {
+    "type": "text",
+    "name": "name",
+    "label": "Name",
+    "placeholder": "Enter your name",
+    "required": true
+  },
+  {
+    "type": "email",
+    "name": "email",
+    "label": "Email",
+    "placeholder": "Enter your email"
+  },
+  {
+    "type": "password",
+    "name": "password",
+    "label": "Password",
+    "placeholder": "Enter your password"
+  },
+  {
+    "type": "number",
+    "name": "age",
+    "label": "Age",
+    "placeholder": "Enter your age"
+  },
+  {
+    "type": "select",
+    "name": "role",
+    "label": "Role",
+    "placeholder": "Choose a role",
+    "options": [
+      {
+        "label": "Admin",
+        "value": "admin"
+      },
+      {
+        "label": "Editor",
+        "value": "editor"
+      },
+      {
+        "label": "Viewer",
+        "value": "viewer"
+      },
+      {
+        "label": "User",
+        "value": "user"
+      }
+    ]
+  },
+  {
+    "type": "textarea",
+    "name": "bio",
+    "label": "Bio",
+    "placeholder": "Enter your bio"
+  },
+  {
+    "type": "checkbox",
+    "name": "terms",
+    "label": "Terms and Conditions",
+    "required": true
+  },
+  {
+    "type": "radio",
+    "name": "gender",
+    "label": "Gender",
+    "options": [
+      {
+        "label": "Male",
+        "value": "male"
+      },
+      {
+        "label": "Female",
+        "value": "female"
+      }
+    ]
+  }
+]
