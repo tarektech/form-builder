@@ -133,7 +133,7 @@ export function DynamicFormInputField({
                   onChange: (event: ChangeEvent<HTMLInputElement>) =>
                     ctx.setValue(fieldId, event.target.value),
                 })}
-            required={field.required}
+            required={field.type === 'email' || field.required}
             aria-invalid={error ? true : undefined}
             className={cn(error && 'border-destructive')}
           />
