@@ -1,6 +1,6 @@
 'use client';
 
-import { type FormEvent, useCallback, useMemo, useState } from 'react';
+import { type SubmitEvent, useCallback, useMemo, useState } from 'react';
 
 import { FieldGroup } from '@/components/ui/field';
 import formFields from '@/config/form-fields.json';
@@ -89,18 +89,11 @@ export function DynamicForm() {
     [values, setValue, errors],
   );
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const formEl = e.currentTarget;
+  function handleSubmit(event:SubmitEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formEl = event.currentTarget;
     const nextErrors = validate(fields, values, formEl);
     setErrors(nextErrors);
-
-    if (Object.keys(nextErrors).length > 0) {
-      console.error('[DynamicForm] Validation failed', nextErrors);
-      return;
-    }
-
-    console.log('[DynamicForm] Submit OK', values);
   }
 
   return (
@@ -132,7 +125,7 @@ export function DynamicForm() {
           </FieldGroup>
           <button
             type="submit"
-            className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+            className="inline-flex h-10 cursor-pointer items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow transition-[transform,box-shadow,filter] duration-150 ease-out hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none active:scale-[0.98] active:brightness-95 active:shadow-inner"
           >
             Submit
           </button>

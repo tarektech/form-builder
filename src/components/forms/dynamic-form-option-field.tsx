@@ -129,7 +129,7 @@ export function DynamicFormOptionField({
           <FieldLabel htmlFor={fieldId}>{label}</FieldLabel>
           <FieldContent>
             <Select
-              value={value || undefined}
+              value={value}
               onValueChange={(nextValue) =>
                 ctx.setValue(fieldId, nextValue ?? '')
               }
@@ -212,7 +212,7 @@ export function DynamicFormOptionField({
           ) : null}
           <RadioGroup
             name={field.name}
-            value={value || undefined}
+            value={value}
             onValueChange={(nextValue) =>
               ctx.setValue(fieldId, nextValue ?? '')
             }

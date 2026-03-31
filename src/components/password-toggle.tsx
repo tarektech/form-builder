@@ -43,7 +43,7 @@ export function PasswordToggle({
             onChange={(event: ChangeEvent<HTMLInputElement>) =>
               ctx.setValue(fieldId, event.target.value)
             }
-            required={field.required}
+            required
             aria-invalid={error ? true : undefined}
             className={cn('pr-10', error && 'border-destructive')}
           />

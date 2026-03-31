@@ -147,7 +147,7 @@ export function validate(
       case 'textarea':
       case 'color': {
         const empty = !String(value ?? '').trim();
-        if ((field.type === 'email' || field.required) && empty) {
+        if (empty) {
           errors[fieldId] = REQUIRED_MSG;
         }
 

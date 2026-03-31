@@ -82,7 +82,7 @@ export function DynamicFormInputField({
             placeholder={field.placeholder}
             value={String(ctx.values[fieldId] ?? '')}
             onChange={(event) => ctx.setValue(fieldId, event.target.value)}
-            required={field.required}
+            required
             aria-invalid={error ? true : undefined}
             className={cn(error && 'border-destructive')}
           />
@@ -133,7 +133,7 @@ export function DynamicFormInputField({
                   onChange: (event: ChangeEvent<HTMLInputElement>) =>
                     ctx.setValue(fieldId, event.target.value),
                 })}
-            required={field.type === 'email' || field.required}
+            required={field.type === 'file' ? field.required : true}
             aria-invalid={error ? true : undefined}
             className={cn(error && 'border-destructive')}
           />
