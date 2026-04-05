@@ -1,15 +1,16 @@
-type SelectOption = {
+export type SelectOption = {
   label?: string;
   value?: string;
   description?: string;
 };
 
 type BaseField = {
+  id?: string;
   type?: string;
   name?: string;
   label?: string;
   placeholder?: string;
-  value?: string;
+  value?: string | boolean | string[] | number;
   description?: string;
   required?: boolean;
 };
@@ -24,19 +25,26 @@ type InputField = BaseField & {
     | 'file'
     | 'color'
     | 'hidden'
-    | 'slider';
+    | 'slider'
+    | 'date'
+    | 'phone';
 };
 
 type CheckboxField = BaseField & {
-  type: 'checkbox';
+  type: 'checkbox' | 'switch';
 };
 
 type OptionField = BaseField & {
-  type: 'radio' | 'select' | 'multiselect' | 'checkbox-group';
+  type: 'radio' | 'select' | 'multiselect' | 'checkbox-group' | 'combobox';
   options?: SelectOption[];
 };
 
-export type FormField = InputField | CheckboxField | OptionField;
+type RatingField = BaseField & {
+  type: 'rating';
+  max?: number;
+};
+
+export type FormField = InputField | CheckboxField | OptionField | RatingField;
 
 export type FormValues = Record<
   string,
@@ -75,9 +83,32 @@ function getNativeValidationMessage(
   return control.validationMessage || REQUIRED_MSG;
 }
 
+function getStringFieldValue(value: BaseField['value']) {
+  return typeof value === 'string' || typeof value === 'number'
+    ? String(value)
+    : '';
+}
+
+function getBooleanFieldValue(value: BaseField['value']) {
+  return value === true || value === 'true' || value === 1;
+}
+
+function getArrayFieldValue(value: BaseField['value']) {
+  return Array.isArray(value)
+    ? value.filter((item): item is string => typeof item === 'string')
+    : [];
+}
+
 export function getFieldId(field: FormField, index: number) {
-  const base = field.name?.trim() || 'field';
-  return `${base}-${index}`;
+  if (typeof field.id === 'string' && field.id.trim().length > 0) {
+    return field.id.trim();
+  }
+
+  if (typeof field.name === 'string' && field.name.trim().length > 0) {
+    return `${field.name.trim()}-${index}`;
+  }
+
+  return `field-${index}`;
 }
 
 export function getFieldLabel(field: FormField) {
@@ -104,20 +135,24 @@ export function buildInitialValues(list: FormField[]): FormValues {
 
     switch (field.type) {
       case 'hidden':
-        next[id] = field.value ?? '';
+        next[id] = getStringFieldValue(field.value);
         return;
       case 'checkbox':
-        next[id] = false;
+      case 'switch':
+        next[id] = getBooleanFieldValue(field.value);
         return;
       case 'file':
         next[id] = null;
         return;
       case 'checkbox-group':
       case 'multiselect':
-        next[id] = [];
+        next[id] = getArrayFieldValue(field.value);
+        return;
+      case 'rating':
+        next[id] = getStringFieldValue(field.value);
         return;
       default:
-        next[id] = '';
+        next[id] = getStringFieldValue(field.value);
     }
   });
 
@@ -145,13 +180,17 @@ export function validate(
       case 'number':
       case 'password':
       case 'textarea':
+      case 'date':
+      case 'phone':
+      case 'slider':
       case 'color': {
         const empty = !String(value ?? '').trim();
-        if (empty) {
+        if (field.required && empty) {
           errors[fieldId] = REQUIRED_MSG;
         }
 
-        const validationMessage = getNativeValidationMessage(control);
+        const validationMessage =
+          field.required || !empty ? getNativeValidationMessage(control) : null;
 
         if (validationMessage) {
           errors[fieldId] = validationMessage;
@@ -178,6 +217,7 @@ export function validate(
       }
 
       case 'checkbox':
+      case 'switch':
         if (field.required && value !== true) {
           errors[fieldId] = REQUIRED_MSG;
         }
@@ -185,6 +225,8 @@ export function validate(
 
       case 'select':
       case 'radio':
+      case 'combobox':
+      case 'rating':
         if (field.required && !String(value ?? '').trim()) {
           errors[fieldId] = REQUIRED_MSG;
         }

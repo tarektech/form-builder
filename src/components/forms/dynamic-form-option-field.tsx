@@ -11,6 +11,7 @@ import {
   FieldLegend,
   FieldSet,
 } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
   Select,
@@ -37,7 +38,9 @@ type DynamicFormOptionFieldProps = {
 
 type OptionField = Extract<
   FormField,
-  { type: 'select' | 'multiselect' | 'radio' | 'checkbox-group' }
+  {
+    type: 'select' | 'multiselect' | 'radio' | 'checkbox-group' | 'combobox';
+  }
 >;
 
 type OptionItem = ReturnType<typeof getOptions>[number];
@@ -47,7 +50,8 @@ function isOptionField(field: FormField): field is OptionField {
     field.type === 'select' ||
     field.type === 'multiselect' ||
     field.type === 'radio' ||
-    field.type === 'checkbox-group'
+    field.type === 'checkbox-group' ||
+    field.type === 'combobox'
   );
 }
 
@@ -156,6 +160,37 @@ export function DynamicFormOptionField({
                 </SelectGroup>
               </SelectContent>
             </Select>
+            <OptionError description={field.description} error={error} />
+          </FieldContent>
+        </Field>
+      );
+    }
+
+    case 'combobox': {
+      const value = getStringValue(ctx.values[fieldId]);
+
+      return (
+        <Field data-invalid={error ? true : undefined}>
+          <FieldLabel htmlFor={fieldId}>{label}</FieldLabel>
+          <FieldContent>
+            <Input
+              id={fieldId}
+              name={field.name}
+              list={`${fieldId}-options`}
+              value={value}
+              placeholder={field.placeholder || `Search ${label}`}
+              required={field.required}
+              onChange={(event) => ctx.setValue(fieldId, event.target.value)}
+              aria-invalid={error ? true : undefined}
+              className={cn(error && 'border-destructive')}
+            />
+            <datalist id={`${fieldId}-options`}>
+              {options.map((option) => (
+                <option key={`${fieldId}-${option.value}`} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </datalist>
             <OptionError description={field.description} error={error} />
           </FieldContent>
         </Field>
